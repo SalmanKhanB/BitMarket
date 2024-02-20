@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_yellow"
+    tools:context=".ComplaintActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+
+        <EditText
+            android:hint="Please Write Here which issues do you face.\n\n\nThanks For Your Feedback :)"
+             android:layout_marginTop="42dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="20dp"
+            android:id="@+id/complaint_txt"
+            android:layout_width="match_parent"
+            android:layout_height="255dp"
+            android:imeOptions="actionDone"
+            android:gravity="start"
+            android:textSize="17sp"
+            />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="22dp"
+            android:id="@+id/submitComplaint"
+            android:layout_below="@id/complaint_txt"
+            android:layout_marginTop="33dp"
+            android:layout_centerHorizontal="true"
+            android:text="Submit"
+            android:backgroundTint="@color/purple_500"
+            android:textSize="25sp"
+            android:padding="17dp"
+            android:layout_marginBottom="33dp"
+            />
+
+    </RelativeLayout>
+
+
+</ScrollView>

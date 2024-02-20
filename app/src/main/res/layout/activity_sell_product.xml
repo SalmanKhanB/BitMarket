@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/light_yellow"
+    android:layout_height="match_parent"
+    tools:context=".SellProductActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+
+<TextView
+    android:id="@+id/textViewProductName"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Product Name"
+    android:textSize="18sp"
+    android:layout_marginTop="16dp"
+    android:layout_marginStart="16dp"/>
+
+<EditText
+    android:id="@+id/editTextProductName"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/textViewProductName"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:hint="Enter product name"
+    android:inputType="text"/>
+
+<TextView
+    android:id="@+id/textViewProductCategory"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Product Category"
+    android:textSize="18sp"
+    android:layout_below="@id/editTextProductName"
+    android:layout_marginTop="16dp"
+    android:layout_marginStart="16dp"/>
+
+<Spinner
+    android:id="@+id/spinnerProductCategory"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/textViewProductCategory"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"/>
+
+<TextView
+    android:id="@+id/textViewProductDescription"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Product Description"
+    android:textSize="18sp"
+    android:layout_below="@id/spinnerProductCategory"
+    android:layout_marginTop="16dp"
+    android:layout_marginStart="16dp"/>
+
+<EditText
+    android:id="@+id/editTextProductDescription"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/textViewProductDescription"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:hint="Enter product description"
+    android:inputType="textMultiLine"
+    android:minLines="3"/>
+
+<!-- Code for image uploading goes here -->
+    <!-- ...previous code... -->
+
+    <TextView
+        android:id="@+id/textViewUploadImages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Upload Images"
+        android:textSize="18sp"
+        android:layout_below="@id/editTextProductDescription"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"/>
+
+    <!-- Placeholder for image uploading -->
+    <LinearLayout
+        android:id="@+id/uploadImagesLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewUploadImages"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/logo"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"/>
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginEnd="8dp"/>
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginEnd="16dp"/>
+
+    </LinearLayout>
+
+    <!-- ...remaining code... -->
+
+<TextView
+    android:id="@+id/textViewBrand"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Brand or Company"
+    android:textSize="18sp"
+    android:layout_below="@id/uploadImagesLayout"
+    android:layout_marginTop="16dp"
+    android:layout_marginStart="16dp"/>
+
+<EditText
+    android:id="@+id/editTextBrand"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/textViewBrand"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:hint="Enter brand or company name"
+    android:inputType="text"/>
+
+<TextView
+    android:id="@+id/textViewStartPrice"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Start Price"
+    android:textSize="18sp"
+    android:layout_below="@id/editTextBrand"
+    android:layout_marginTop="16dp"
+    android:layout_marginStart="16dp"/>
+
+<EditText
+    android:id="@+id/editTextStartPrice"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/textViewStartPrice"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:hint="Enter start price"
+    android:inputType="numberDecimal"/>
+    <TextView
+        android:id="@+id/textViewBidEndTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bid End Time"
+        android:textSize="18sp"
+        android:layout_below="@id/editTextStartPrice"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"/>
+
+    <TextView
+        android:id="@+id/editTextBidEndTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewBidEndTime"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textSize="18sp"
+        android:text="Select bid end time"
+        android:focusable="false"
+        android:onClick="showTimePickerDialog"
+        />
+
+        <!-- ...remaining code... -->
+
+<Button
+    android:id="@+id/buttonSubmit"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/editTextBidEndTime"
+    android:layout_centerHorizontal="true"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="32dp"
+    android:backgroundTint="@color/purple_500"
+    android:layout_marginBottom="16dp"
+    android:text="Submit"/>
+    </RelativeLayout>
+
+</ScrollView>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".start.SignInActivity">
+    <ImageView
+        android:id="@+id/image_sign_in"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:src="@drawable/signup_image"
+        android:scaleType="fitXY"
+        />
+    <ScrollView
+        android:layout_below="@id/image_sign_in"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/sign_up"
+                android:text="Sign In"
+                android:textStyle="bold"
+                android:textSize="32sp"
+                android:textColor="@color/purple_500"
+                android:layout_centerHorizontal="true"
+                />
+
+            <TextView
+                android:id="@+id/email_signup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Email*"
+                android:textColor="#2B59FF"
+                android:layout_below="@id/sign_up"
+                android:textSize="18sp"
+                android:layout_marginTop="40dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                />
+            <EditText
+                android:id="@+id/txt_email_signIn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/email_signup"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:hint="Enter Your Email/ Username"
+                android:inputType="textEmailAddress"
+                />
+
+            <TextView
+                android:id="@+id/password_sign_in"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Password*"
+                android:textColor="#2B59FF"
+                android:layout_below="@id/txt_email_signIn"
+                android:textSize="18sp"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                />
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:passwordToggleEnabled="true"
+                android:id="@+id/field_txt"
+                android:layout_below="@id/password_sign_in"
+                android:background="#00FFFFFF"
+                app:boxBackgroundColor="#00FFFFFF"
+                android:textColorHint="#7C7C7C"
+                >
+                <EditText
+                    android:id="@+id/txt_password_sign_in"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:hint="Enter password"
+                    android:inputType="textPassword"
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/field_txt"
+                android:layout_marginTop="10dp"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/radioSeller"
+                    android:layout_width="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:layout_height="wrap_content"
+                    android:text="Seller" />
+
+                <RadioButton
+                    android:id="@+id/radioBuyer"
+                    android:layout_width="wrap_content"
+                    android:checked="true"
+                    android:layout_height="wrap_content"
+                    android:text="Buyer" />
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/sign_In_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="33dp"
+                android:text="Sign In"
+                android:textSize="18sp"
+                android:backgroundTint="@color/purple_500"
+                android:layout_below="@id/radioGroup"
+                />
+
+            <TextView
+                android:id="@+id/forget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Forgot Password?"
+                android:textColor="#2196F3"
+                android:textStyle="bold"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="20dp"
+                android:layout_below="@id/sign_In_btn"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:onClick="gotoForget"
+                />
+            <TextView
+                android:id="@+id/accounttxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Already Have an account?"
+                 android:layout_centerHorizontal="true"
+                android:layout_below="@id/forget"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                />
+
+            <TextView
+                android:id="@+id/click_sign_up"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sign Up"
+                android:textColor="@color/purple_500"
+                android:layout_toRightOf="@id/accounttxt"
+                android:layout_below="@id/forget"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="33dp"
+                android:layout_marginTop="10dp"
+                />
+
+
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

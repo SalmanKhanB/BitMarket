@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="product_categories">
+        <item>Electronics</item>
+        <item>Medicine</item>
+        <item>Books</item>
+        <item>Clothing</item>
+        <item>Home Appliances</item>
+        <item>Furniture</item>
+        <item>Beauty &amp; Personal Care</item>
+        <item>Toys &amp; Games</item>
+        <item>Automotive</item>
+        <item>Sports &amp; Fitness</item>
+        <item>Food &amp; Beverages</item>
+        <item>Jewelry</item>
+        <item>Music</item>
+        <item>Movies</item>
+        <item>Pet Supplies</item>
+        <item>Stationery</item>
+        <item>Health &amp; Wellness</item>
+        <item>Baby Products</item>
+        <item>Tools &amp; Hardware</item>
+        <item>Office Supplies</item>
+        <item>Electrical Appliances</item>
+        <item>Garden &amp; Outdoor</item>
+        <item>Art &amp; Craft</item>
+        <item>Electrical &amp; Lighting</item>
+        <item>Home Decor</item>
+        <item>Kitchenware</item>
+        <item>Travel &amp; Luggage</item>
+        <item>Fitness Equipment</item>
+        <item>Party Supplies</item>
+        <item>Camera &amp; Photo</item>
+    </string-array>
+
+</resources>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/light_yellow"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ProductDetailsActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.denzcoskun.imageslider.ImageSlider
+            android:id="@+id/image_slider"
+            android:layout_width="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_height="270dp"
+            app:iss_auto_cycle="true"
+            android:background="#AEE4FFE5"
+            app:iss_period="3000"
+            app:iss_delay="3000"
+            />
+
+
+        <TextView
+            android:id="@+id/product_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+
+            android:layout_below="@id/image_slider"
+             android:layout_marginTop="16dp"
+            android:text="ppName"
+            android:textSize="19sp"
+             android:textStyle="bold" />
+        <TextView
+            android:id="@+id/bidEndTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/image_slider"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            />
+
+
+        <TextView
+            android:id="@+id/product_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/product_name"
+            android:layout_marginHorizontal="10dp"
+
+            android:layout_marginTop="8dp"
+            android:text="sdfdf"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/brandName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/product_name"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            />
+
+
+
+<androidx.cardview.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_below="@id/product_category"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="10dp"
+    android:id="@+id/ll"
+    >
+
+<TextView
+    android:id="@+id/product_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="dfd wedfs fdsf"
+    android:padding="10dp"
+
+    android:textSize="14sp" />
+</androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_below="@id/ll"
+            android:layout_marginTop="10dp"
+            android:id="@+id/bids"
+            app:cardCornerRadius="12dp"
+            android:layout_margin="10dp"
+            app:cardElevation="10dp"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                 android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bids"
+                    android:textSize="21sp"
+                    android:layout_margin="5dp"
+                    android:textColor="@color/purple_500"
+                    android:textStyle="bold"
+                    />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/bids_rv"
+                    android:layout_width="match_parent"
+                    android:layout_margin="10dp"
+                    android:layout_height="180dp"
+                    android:minHeight="50dp"
+                    />            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/bid_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/bids"
+            android:layout_centerHorizontal="true"
+            android:backgroundTint="@color/purple_500"
+            android:layout_marginTop="16dp"
+            android:text="Place Bid" />
+
+        <Button
+            android:id="@+id/bid_delete_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/bids"
+            android:visibility="gone"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:text="Delete Bid"
+            android:backgroundTint="#FB2919"/>
+    </RelativeLayout>
+
+</ScrollView>
