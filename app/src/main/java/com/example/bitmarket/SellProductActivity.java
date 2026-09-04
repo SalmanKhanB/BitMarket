@@ -30,13 +30,18 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 
 public class SellProductActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -51,8 +56,9 @@ public class SellProductActivity extends AppCompatActivity implements AdapterVie
         private ImageView imageView3;
 
         private DatabaseReference databaseReference;
-        private StorageReference storageReference;
         private List<Uri> imageUris;
+        private final Uri[] slotUris = new Uri[3];
+        private int selectedSlot = 0;
 
         private static final int PICK_IMAGE_REQUEST_CODE = 1;
     private ProgressDialog progressDialog;
@@ -94,12 +100,12 @@ public class SellProductActivity extends AppCompatActivity implements AdapterVie
 
             imageUris = new ArrayList<>();
 
-            storageReference = FirebaseStorage.getInstance().getReference();
             databaseReference = FirebaseDatabase.getInstance().getReference().child("Products");
 
             imageView1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    selectedSlot = 0;
                     openImagePicker();
                 }
             });
@@ -107,6 +113,7 @@ public class SellProductActivity extends AppCompatActivity implements AdapterVie
             imageView2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    selectedSlot = 1;
                     openImagePicker();
                 }
             });
@@ -114,6 +121,7 @@ public class SellProductActivity extends AppCompatActivity implements AdapterVie
             imageView3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    selectedSlot = 2;
                     openImagePicker();
                 }
             });
@@ -164,27 +172,51 @@ public void showTimePickerDialog(View v) {
     datePickerDialog.show();
 }
 
-        private void saveProductDetails() {
-            progressDialog.show();
+        private void dismissProgressDialog() {
+            if (!isFinishing() && !isDestroyed() && progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+        }
 
+        private void saveProductDetails() {
             String productName = editTextProductName.getText().toString().trim();
-            String productCategory = spinnerProductCategory.getSelectedItem().toString();
+            String productCategory = spinnerProductCategory.getSelectedItem() != null ? spinnerProductCategory.getSelectedItem().toString() : "";
             String productDescription = editTextProductDescription.getText().toString().trim();
             String brand = editTextBrand.getText().toString().trim();
             String startPrice = editTextStartPrice.getText().toString().trim();
             String bidEndTime = textViewBidEndTime.getText().toString().trim();
 
-            // Check for empty fields
-            if (productName.isEmpty() || productDescription.isEmpty() || brand.isEmpty() || startPrice.isEmpty() || bidEndTime.isEmpty()) {
-                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            // 1. Validate fields before showing progress dialog
+            if (productName.isEmpty() || productDescription.isEmpty() || brand.isEmpty() || startPrice.isEmpty()
+                    || bidEndTime.isEmpty() || bidEndTime.equalsIgnoreCase("Select bid end time")) {
+                Toast.makeText(this, "Please fill in all fields including bid end time", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Check if at least one image is selected
+            // 2. Gather selected images
+            imageUris.clear();
+            for (Uri uri : slotUris) {
+                if (uri != null) {
+                    imageUris.add(uri);
+                }
+            }
+
             if (imageUris.isEmpty()) {
                 Toast.makeText(this, "Please select at least one image", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            String uid = FirebaseAuth.getInstance().getUid();
+            if (uid == null) {
+                uid = AppConst.uid;
+            }
+            if (uid == null) {
+                Toast.makeText(this, "User not authenticated. Please log in again.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 3. Show progress dialog only after passing validations
+            progressDialog.show();
 
             // Create a new product object
             Product product = new Product();
@@ -194,64 +226,96 @@ public void showTimePickerDialog(View v) {
             product.setBrand(brand);
             product.setStartPrice(startPrice);
             product.setBidEndTime(bidEndTime);
-            product.setUid(AppConst.uid);
+            product.setUid(uid);
 
             // Generate a new unique key for the product in the database
             String productId = databaseReference.push().getKey();
+            if (productId == null) {
+                dismissProgressDialog();
+                Toast.makeText(this, "Failed to generate unique product key", Toast.LENGTH_SHORT).show();
+                return;
+            }
             product.setKey(productId);
 
-            // Upload images to Firebase Storage
-            uploadImages(productId, product);
+            // Convert images to Base64 and save to Realtime Database directly (no Cloud Storage needed)
+            saveProductWithBase64Images(productId, product);
         }
 
-        private void uploadImages(final String productId, final Product product) {
-            final int totalImages = imageUris.size();
-            final List<String> downloadUrls = new ArrayList<>();
+        private String uriToBase64(Uri uri) {
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(uri);
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (bitmap == null) {
+                    return null;
+                }
 
-            for (int i = 0; i < totalImages; i++) {
-                final StorageReference imageRef = storageReference.child("product_images").child(productId).child("image_" + i);
-                UploadTask uploadTask = imageRef.putFile(imageUris.get(i));
-                uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                    @Override
-                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                        if (!task.isSuccessful()) {
-                            throw task.getException();
-                        }
+                // Resize bitmap to max 800px dimension to keep database size optimal
+                int width = bitmap.getWidth();
+                int height = bitmap.getHeight();
+                int maxDim = 800;
+                if (width > maxDim || height > maxDim) {
+                    float ratio = Math.min((float) maxDim / width, (float) maxDim / height);
+                    int newWidth = Math.round(ratio * width);
+                    int newHeight = Math.round(ratio * height);
+                    bitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
+                }
 
-                        return imageRef.getDownloadUrl();
-                    }
-                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        if (task.isSuccessful()) {
-                            Uri downloadUri = task.getResult();
-                            if (downloadUri != null) {
-                                downloadUrls.add(downloadUri.toString());
-
-                                if (downloadUrls.size() == totalImages) {
-                                    // All images uploaded successfully
-                                    product.setImageUrls(downloadUrls);
-
-                                    // Save the product object to the database using the generated key
-                                    databaseReference.child(productId).setValue(product)
-                                            .addOnCompleteListener(SellProductActivity.this, new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    progressDialog.dismiss();
-                                                    if (task.isSuccessful()) {
-                                                        Toast.makeText(SellProductActivity.this, "Product details saved", Toast.LENGTH_SHORT).show();
-                                                        finish();
-                                                    } else {
-                                                        Toast.makeText(SellProductActivity.this, "Failed to save product details", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                            });
-                                }
-                            }
-                        }
-                    }
-                });
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 60, outputStream);
+                byte[] bytes = outputStream.toByteArray();
+                return Base64.encodeToString(bytes, Base64.NO_WRAP);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
             }
+        }
+
+        private void saveProductWithBase64Images(final String productId, final Product product) {
+            final List<Uri> urisToConvert = new ArrayList<>(imageUris);
+
+            Executors.newSingleThreadExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    final List<String> base64Images = new ArrayList<>();
+                    for (Uri uri : urisToConvert) {
+                        String base64 = uriToBase64(uri);
+                        if (base64 != null) {
+                            base64Images.add(base64);
+                        }
+                    }
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (base64Images.isEmpty()) {
+                                dismissProgressDialog();
+                                Toast.makeText(SellProductActivity.this, "Failed to process selected images", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            product.setImageUrls(base64Images);
+
+                            databaseReference.child(productId).setValue(product)
+                                    .addOnCompleteListener(SellProductActivity.this, new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> dbTask) {
+                                            dismissProgressDialog();
+                                            if (dbTask.isSuccessful()) {
+                                                Toast.makeText(SellProductActivity.this, "Product details saved", Toast.LENGTH_SHORT).show();
+                                                finish();
+                                            } else {
+                                                String errorMsg = dbTask.getException() != null ? dbTask.getException().getMessage() : "Failed to save product details";
+                                                Toast.makeText(SellProductActivity.this, "Database Error: " + errorMsg, Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    });
+                        }
+                    });
+                }
+            });
         }
 
         private void openImagePicker() {
@@ -269,25 +333,22 @@ public void showTimePickerDialog(View v) {
                 if (data.getClipData() != null) {
                     int count = data.getClipData().getItemCount();
 
-                    for (int i = 0; i < count; i++) {
-                        Uri imageUri = data.getClipData().getItemAt(i).getUri();
-                        imageUris.add(imageUri);
-
-                        // Display selected images in the ImageView placeholders
-                        if (i == 0) {
-                            imageView1.setImageURI(imageUri);
-                        } else if (i == 1) {
-                            imageView2.setImageURI(imageUri);
-                        } else if (i == 2) {
-                            imageView3.setImageURI(imageUri);
+                    for (int i = 0; i < 3; i++) {
+                        if (i < count) {
+                            slotUris[i] = data.getClipData().getItemAt(i).getUri();
                         }
                     }
+
+                    if (slotUris[0] != null) imageView1.setImageURI(slotUris[0]);
+                    if (slotUris[1] != null) imageView2.setImageURI(slotUris[1]);
+                    if (slotUris[2] != null) imageView3.setImageURI(slotUris[2]);
                 } else if (data.getData() != null) {
                     Uri imageUri = data.getData();
-                    imageUris.add(imageUri);
+                    slotUris[selectedSlot] = imageUri;
 
-                    // Display selected image in the first ImageView placeholder
-                    imageView1.setImageURI(imageUri);
+                    if (selectedSlot == 0) imageView1.setImageURI(imageUri);
+                    else if (selectedSlot == 1) imageView2.setImageURI(imageUri);
+                    else if (selectedSlot == 2) imageView3.setImageURI(imageUri);
                 }
             }
         }

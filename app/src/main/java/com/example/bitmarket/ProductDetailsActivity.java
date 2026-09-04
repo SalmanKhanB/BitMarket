@@ -28,6 +28,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import android.util.Base64;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -88,11 +91,28 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
 // Set image URLs for the slider
     List<SlideModel> slideModels = new ArrayList<>();
-    for (String url :product.getImageUrls()     ) {
-        slideModels.add(new SlideModel(url,product.getStartPrice()+" Rs",ScaleTypes.CENTER_INSIDE));
+    if (product.getImageUrls() != null) {
+        int imgIndex = 0;
+        for (String url : product.getImageUrls()) {
+            if (url != null) {
+                if (url.startsWith("http://") || url.startsWith("https://")) {
+                    slideModels.add(new SlideModel(url, product.getStartPrice() + " Rs", ScaleTypes.CENTER_INSIDE));
+                } else {
+                    try {
+                        String cleanBase64 = url.contains(",") ? url.substring(url.indexOf(",") + 1) : url;
+                        byte[] decoded = Base64.decode(cleanBase64, Base64.DEFAULT);
+                        File tempFile = new File(getCacheDir(), "slide_" + (product.getKey() != null ? product.getKey() : "temp") + "_" + (imgIndex++) + ".jpg");
+                        FileOutputStream fos = new FileOutputStream(tempFile);
+                        fos.write(decoded);
+                        fos.close();
+                        slideModels.add(new SlideModel(tempFile.getAbsolutePath(), product.getStartPrice() + " Rs", ScaleTypes.CENTER_INSIDE));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
-
-// Add more images as needed
 
 // Add the slides to the image slider
     imageSlider.setImageList(slideModels);

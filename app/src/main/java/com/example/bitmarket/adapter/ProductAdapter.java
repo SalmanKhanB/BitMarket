@@ -15,6 +15,7 @@ import com.example.bitmarket.ProductDetailsActivity;
 import com.example.bitmarket.R;
 import com.example.bitmarket.models.Product;
 
+import android.util.Base64;
 import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
@@ -45,9 +46,21 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         holder.price.setText(product.getStartPrice());
 
         // Load and display the first image using Glide
-        if (!product.getImageUrls().isEmpty()) {
+        if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
             String imageUrl = product.getImageUrls().get(0);
-            Glide.with(context).load(imageUrl).into(holder.productImageView);
+            if (imageUrl != null) {
+                if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+                    Glide.with(context).load(imageUrl).into(holder.productImageView);
+                } else {
+                    try {
+                        String cleanBase64 = imageUrl.contains(",") ? imageUrl.substring(imageUrl.indexOf(",") + 1) : imageUrl;
+                        byte[] decodedString = Base64.decode(cleanBase64, Base64.DEFAULT);
+                        Glide.with(context).asBitmap().load(decodedString).into(holder.productImageView);
+                    } catch (Exception e) {
+                        Glide.with(context).load(imageUrl).into(holder.productImageView);
+                    }
+                }
+            }
         }
         holder.itemView.setOnClickListener(view -> {
             Product product1 = productList.get(position);
