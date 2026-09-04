@@ -8,6 +8,7 @@ public class Users {
     String phone="";
     String name="";
     String status="";
+    String profileImage="";
 
     public Users() {
     }
@@ -43,12 +44,22 @@ public class Users {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public String getProfileImage() {
+        return profileImage != null ? profileImage : "";
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
     public Map<String, Object> toMap() {
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("email", email);
         userMap.put("phone", phone);
         userMap.put("name", name);
         userMap.put("status", status);
+        userMap.put("profileImage", profileImage);
         return userMap;
     }
 }
