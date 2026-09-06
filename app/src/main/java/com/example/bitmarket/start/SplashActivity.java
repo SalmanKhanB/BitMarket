@@ -30,20 +30,53 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 if (user == null) {
                     Intent intent = new Intent(SplashActivity.this, SignInActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
+                    finish();
                 } else {
-                    if (UserStatusManager.isBuyer(SplashActivity.this)){
-                        Intent intent = new Intent(SplashActivity.this, BuyerActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                    }else {
-                        Intent intent = new Intent(SplashActivity.this, SellerActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
+                    String status = UserStatusManager.getUserStatus(SplashActivity.this);
+                    if (status != null && !status.isEmpty()) {
+                        if ("Buyer".equalsIgnoreCase(status)) {
+                            Intent intent = new Intent(SplashActivity.this, BuyerActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        } else {
+                            Intent intent = new Intent(SplashActivity.this, SellerActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
+                        finish();
+                    } else {
+                        // Query Firebase to get actual status
+                        com.google.firebase.database.FirebaseDatabase.getInstance().getReference("Profiles")
+                                .child(user.getUid()).child("status")
+                                .addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(com.google.firebase.database.DataSnapshot snapshot) {
+                                        String fbStatus = snapshot.exists() && snapshot.getValue() != null ? snapshot.getValue().toString() : "Buyer";
+                                        UserStatusManager.setUserStatus(SplashActivity.this, fbStatus);
+                                        if ("Buyer".equalsIgnoreCase(fbStatus)) {
+                                            Intent intent = new Intent(SplashActivity.this, BuyerActivity.class);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(intent);
+                                        } else {
+                                            Intent intent = new Intent(SplashActivity.this, SellerActivity.class);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(intent);
+                                        }
+                                        finish();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(com.google.firebase.database.DatabaseError error) {
+                                        Intent intent = new Intent(SplashActivity.this, BuyerActivity.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                });
                     }
                 }
-                finish();
             }
         }, SPLASH_TIME_OUT);
 

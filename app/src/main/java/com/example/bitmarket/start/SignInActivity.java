@@ -88,35 +88,55 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
-    private void signInFunc(String email, String password, String status){
-
-
-        auth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+    private void signInFunc(String email, String password, final String selectedStatus) {
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(SignInActivity.this, "Sign In Successfully..", Toast.LENGTH_SHORT).show();
-                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Profiles").child(task.getResult().getUser().getUid()).child("status");
-                    reference.setValue(status);
-                    progressDialog.dismiss();
-                    progressDialog.cancel();
-                    if (status.equals("Buyer")){
-                        UserStatusManager.setUserStatus(SignInActivity.this, "Buyer"); // Replace "buyer" with the actual status
+                if (task.isSuccessful() && task.getResult() != null && task.getResult().getUser() != null) {
+                    final String uid = task.getResult().getUser().getUid();
+                    DatabaseReference profileRef = FirebaseDatabase.getInstance().getReference().child("Profiles").child(uid);
 
-                        Intent intent =  new Intent(SignInActivity.this, BuyerActivity.class);
-                        startActivity(intent);
+                    profileRef.addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull com.google.firebase.database.DataSnapshot snapshot) {
+                            if (progressDialog.isShowing()) progressDialog.dismiss();
+                            String finalStatus = selectedStatus;
+                            if (snapshot.exists() && snapshot.hasChild("status") && snapshot.child("status").getValue() != null) {
+                                finalStatus = snapshot.child("status").getValue().toString();
+                            } else {
+                                profileRef.child("status").setValue(selectedStatus);
+                            }
 
-                    }else{
-                        UserStatusManager.setUserStatus(SignInActivity.this, "Seller");
-                        Intent intent =  new Intent(SignInActivity.this, SellerActivity.class);
-                        startActivity(intent);
-                    }
-//                    intent.putExtra("admin","user");
-                    finish();
-                }else{
-                    progressDialog.dismiss();
-                    progressDialog.cancel();
-                    Toast.makeText(SignInActivity.this,"Error..\n"+task.getException().getMessage() , Toast.LENGTH_SHORT).show();
+                            UserStatusManager.setUserStatus(SignInActivity.this, finalStatus);
+                            Toast.makeText(SignInActivity.this, "Signed in successfully", Toast.LENGTH_SHORT).show();
+
+                            Intent intent;
+                            if ("Buyer".equalsIgnoreCase(finalStatus)) {
+                                intent = new Intent(SignInActivity.this, BuyerActivity.class);
+                            } else {
+                                intent = new Intent(SignInActivity.this, SellerActivity.class);
+                            }
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull com.google.firebase.database.DatabaseError error) {
+                            if (progressDialog.isShowing()) progressDialog.dismiss();
+                            UserStatusManager.setUserStatus(SignInActivity.this, selectedStatus);
+                            Intent intent = "Buyer".equalsIgnoreCase(selectedStatus)
+                                    ? new Intent(SignInActivity.this, BuyerActivity.class)
+                                    : new Intent(SignInActivity.this, SellerActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
+                } else {
+                    if (progressDialog.isShowing()) progressDialog.dismiss();
+                    String errorMsg = task.getException() != null ? task.getException().getMessage() : "Sign in failed";
+                    Toast.makeText(SignInActivity.this, "Error: " + errorMsg, Toast.LENGTH_SHORT).show();
                 }
             }
         });

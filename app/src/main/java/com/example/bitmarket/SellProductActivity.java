@@ -83,6 +83,9 @@ public class SellProductActivity extends AppCompatActivity implements AdapterVie
             progressDialog.setMessage("Saving product details...");
             progressDialog.setCancelable(false);
             setTitle("Sell Product");
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
 
             // Spinner setup
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.product_categories, android.R.layout.simple_spinner_item);
@@ -207,10 +210,10 @@ public void showTimePickerDialog(View v) {
             }
 
             String uid = FirebaseAuth.getInstance().getUid();
-            if (uid == null) {
-                uid = AppConst.uid;
+            if (uid == null || uid.isEmpty()) {
+                uid = AppConst.getUid();
             }
-            if (uid == null) {
+            if (uid == null || uid.isEmpty()) {
                 Toast.makeText(this, "User not authenticated. Please log in again.", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -355,12 +358,20 @@ public void showTimePickerDialog(View v) {
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            String selectedCategory = parent.getItemAtPosition(position).toString();
-            Toast.makeText(this, "Selected Category: " + selectedCategory, Toast.LENGTH_SHORT).show();
+            // Selected category handled by spinner
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
             // Do nothing
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(@NonNull android.view.MenuItem item) {
+            if (item.getItemId() == android.R.id.home) {
+                onBackPressed();
+                return true;
+            }
+            return super.onOptionsItemSelected(item);
         }
     }

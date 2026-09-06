@@ -63,47 +63,36 @@ View v = inflater.inflate(R.layout.fragment_out_of_date, container, false);
                 @SuppressLint("NotifyDataSetChanged")
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    listMainDatabase.clear();
-                    if (snapshot.exists()){
-                        for (DataSnapshot snapshot1: snapshot.getChildren()){
-                            try{
-                                String uid = snapshot1.child("uid").getValue().toString();
-                                System.out.println("uiddd: "+ uid+" : "+ AppConst.uid);
-                            if (AppConst.uid.equals(uid)){
-                                Product product = snapshot1.getValue(Product.class);
+                    String myUid = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser() != null ? com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser().getUid() : "";
+                    if (snapshot.exists()) {
+                        for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                            try {
+                                String uid = snapshot1.child("uid").getValue() != null ? snapshot1.child("uid").getValue().toString() : "";
+                                if (!myUid.isEmpty() && myUid.equals(uid)) {
+                                    Product product = snapshot1.getValue(Product.class);
+                                    if (product != null) {
+                                        String dateString = product.getBidEndTime();
+                                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                        Date date;
 
-                                String dateString = product.getBidEndTime();
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                                Date date;
+                                        try {
+                                            date = sdf.parse(dateString);
+                                            if (date != null) {
+                                                LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                                                LocalDate currentDate = LocalDate.now();
 
-                                try {
-                                    date = sdf.parse(dateString);
-                                    if (date != null) {
-                                        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                                        LocalDate currentDate = LocalDate.now();
-
-                                        if (localDate.isBefore(currentDate)) {
-                                            // Date is today or in the future, show a message
-                                            listMainDatabase.add(product);
-                                        } else {
-                                            // Date is in the past
-                                            // You can add your logic for handling past dates
+                                                if (localDate.isBefore(currentDate)) {
+                                                    listMainDatabase.add(product);
+                                                }
+                                            }
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
                                         }
                                     }
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
                                 }
-
-//                                Product product = snapshot1.getValue(Product.class);
-//
-//                                listMainDatabase.add(product);
-
-                            }}catch (Exception ex){
-
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
                             }
-                        }
-                        if (listMainDatabase.size()<1){
-                            Toast.makeText(getContext(), "Data Not Found", Toast.LENGTH_SHORT).show();
                         }
                         productAdapter.notifyDataSetChanged();
                     }else {

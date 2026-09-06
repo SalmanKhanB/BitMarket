@@ -58,6 +58,9 @@ public class EditProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_profile);
         users = new Users();
         setTitle("Edit Profile");
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         editProfileImageView = findViewById(R.id.editProfileImageView);
         editTextName = findViewById(R.id.editTextName);
@@ -284,5 +287,13 @@ public class EditProfileActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull android.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
 

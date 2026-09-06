@@ -2,139 +2,221 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/light_yellow"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/light_yellow"
+    android:fillViewport="true"
     tools:context=".ProductDetailsActivity">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.denzcoskun.imageslider.ImageSlider
-            android:id="@+id/image_slider"
-            android:layout_width="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_height="270dp"
-            app:iss_auto_cycle="true"
-            android:background="#AEE4FFE5"
-            app:iss_period="3000"
-            app:iss_delay="3000"
-            />
 
-
-        <TextView
-            android:id="@+id/product_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-
-            android:layout_below="@id/image_slider"
-             android:layout_marginTop="16dp"
-            android:text="ppName"
-            android:textSize="19sp"
-             android:textStyle="bold" />
-        <TextView
-            android:id="@+id/bidEndTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/image_slider"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            />
-
-
-        <TextView
-            android:id="@+id/product_category"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/product_name"
-            android:layout_marginHorizontal="10dp"
-
-            android:layout_marginTop="8dp"
-            android:text="sdfdf"
-            android:textSize="16sp" />
-        <TextView
-            android:id="@+id/brandName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/product_name"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            />
-
-
-
-<androidx.cardview.widget.CardView
-    android:layout_width="match_parent"
-    android:layout_below="@id/product_category"
-    android:layout_height="wrap_content"
-    android:layout_marginHorizontal="10dp"
-    android:id="@+id/ll"
-    >
-
-<TextView
-    android:id="@+id/product_description"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="dfd wedfs fdsf"
-    android:padding="10dp"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    android:textSize="14sp" />
-</androidx.cardview.widget.CardView>
+        <!-- Image Slider Card -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_below="@id/ll"
-            android:layout_marginTop="10dp"
-            android:id="@+id/bids"
-            app:cardCornerRadius="12dp"
-            android:layout_margin="10dp"
-            app:cardElevation="10dp"
-            android:layout_height="wrap_content">
+            android:layout_height="280dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/white">
+
+            <com.denzcoskun.imageslider.ImageSlider
+                android:id="@+id/image_slider"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                app:iss_auto_cycle="true"
+                app:iss_delay="3000"
+                app:iss_period="3000" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Product Main Info Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/white">
+
             <LinearLayout
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                 android:layout_height="wrap_content">
+                android:padding="16dp">
+
+                <!-- Title & Bid End Time Row -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/product_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toStartOf="@id/bidEndTime"
+                        android:layout_marginEnd="8dp"
+                        android:text="Product Name"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/bidEndTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/bg_badge_time"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp"
+                        android:text="End Time"
+                        android:textColor="@color/slate_700"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+                <!-- Category & Brand Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/product_category"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_badge_category"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="4dp"
+                        android:text="Category"
+                        android:textColor="@color/purple_500"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="14dp"
+                        android:layout_marginHorizontal="10dp"
+                        android:background="@color/slate_200" />
+
+                    <TextView
+                        android:id="@+id/brandName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Brand"
+                        android:textColor="@color/slate_500"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Description Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bids"
-                    android:textSize="21sp"
-                    android:layout_margin="5dp"
-                    android:textColor="@color/purple_500"
-                    android:textStyle="bold"
-                    />
+                    android:text="Description"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/product_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:text="Product description goes here..."
+                    android:textColor="@color/slate_700"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Bids Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/bids"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Active Bids"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/bids_rv"
                     android:layout_width="match_parent"
-                    android:layout_margin="10dp"
-                    android:layout_height="180dp"
-                    android:minHeight="50dp"
-                    />            </LinearLayout>
-
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:maxHeight="220dp"
+                    android:minHeight="40dp"
+                    android:nestedScrollingEnabled="false" />
+            </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- Action Buttons -->
         <Button
             android:id="@+id/bid_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/bids"
-            android:layout_centerHorizontal="true"
-            android:backgroundTint="@color/purple_500"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
             android:layout_marginTop="16dp"
-            android:text="Place Bid" />
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="@color/purple_500"
+            android:text="Place Bid"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="12dp" />
 
         <Button
             android:id="@+id/bid_delete_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/bids"
-            android:visibility="gone"
-            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
             android:layout_marginTop="16dp"
-            android:text="Delete Bid"
-            android:backgroundTint="#FB2919"/>
-    </RelativeLayout>
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="@color/danger_red"
+            android:text="Delete Listing"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:cornerRadius="12dp" />
+
+    </LinearLayout>
 
 </ScrollView>

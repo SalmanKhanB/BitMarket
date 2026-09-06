@@ -5,44 +5,76 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_yellow"
+    android:fillViewport="true"
     tools:context=".ComplaintActivity">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
 
-
-        <EditText
-            android:hint="Please Write Here which issues do you face.\n\n\nThanks For Your Feedback :)"
-             android:layout_marginTop="42dp"
-            android:layout_marginLeft="22dp"
-            android:layout_marginRight="20dp"
-            android:id="@+id/complaint_txt"
-            android:layout_width="match_parent"
-            android:layout_height="255dp"
-            android:imeOptions="actionDone"
-            android:gravity="start"
-            android:textSize="17sp"
-            />
-
-        <Button
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="22dp"
-            android:layout_marginRight="22dp"
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="We'd love your feedback"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Please describe any issues, questions or suggestions you have below."
+                    android:textColor="@color/slate_500"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/complaint_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_input_field"
+                    android:gravity="top|start"
+                    android:hint="Type your message here..."
+                    android:imeOptions="actionDone"
+                    android:inputType="textMultiLine"
+                    android:padding="16dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/slate_400"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <Button
             android:id="@+id/submitComplaint"
-            android:layout_below="@id/complaint_txt"
-            android:layout_marginTop="33dp"
-            android:layout_centerHorizontal="true"
-            android:text="Submit"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="24dp"
             android:backgroundTint="@color/purple_500"
-            android:textSize="25sp"
-            android:padding="17dp"
-            android:layout_marginBottom="33dp"
-            />
+            android:text="Send Message"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="12dp" />
 
-    </RelativeLayout>
-
+    </LinearLayout>
 
 </ScrollView>

@@ -1,20 +1,19 @@
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-     android:layout_width="wrap_content"
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginStart="5dp"
-    android:layout_marginEnd="5dp"
-    app:cardCornerRadius="6dp"
-    app:cardElevation="3dp"
-    android:layout_marginTop="2dp"
-    android:layout_marginBottom="2dp"
-     >
+    android:layout_marginHorizontal="4dp"
+    android:layout_marginVertical="2dp">
 
     <TextView
         android:id="@+id/textCategoryName"
         android:layout_width="wrap_content"
-        android:text=" "
-         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:padding="8dp" />
-</androidx.cardview.widget.CardView>
+        android:layout_height="36dp"
+        android:gravity="center"
+        android:paddingHorizontal="16dp"
+        android:background="@drawable/bg_chip_unselected"
+        android:text="Category"
+        android:textColor="@color/chip_text_unselected"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+</FrameLayout>

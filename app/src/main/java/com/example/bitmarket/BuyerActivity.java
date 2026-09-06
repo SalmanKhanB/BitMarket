@@ -43,18 +43,29 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
+
 public class BuyerActivity extends AppCompatActivity {
     List<Product> listMainDatabase;
     DatabaseReference databaseReference;
     ProductAdapter productAdapter;
     EditText etSearch;
+    private ShimmerFrameLayout shimmerFrameLayout;
+    private View layoutEmptyState;
+    private RecyclerView recyclerViewVerticle;
+    private String currentSelectedCategory = "All";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-         listMainDatabase = new ArrayList<>();
+        listMainDatabase = new ArrayList<>();
         setTitle("Buyer BitMarket");
 
+        shimmerFrameLayout = findViewById(R.id.shimmer_view_container);
+        layoutEmptyState = findViewById(R.id.layout_empty_state);
+        recyclerViewVerticle = findViewById(R.id.rv_vertical);
+        etSearch = findViewById(R.id.etSearch);
 
         String[] originalCategories = getResources().getStringArray(R.array.product_categories);
         String[] categories = new String[originalCategories.length + 1];
@@ -67,7 +78,6 @@ public class BuyerActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.list_View);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        etSearch = findViewById(R.id.etSearch);
 
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -80,127 +90,87 @@ public class BuyerActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                // Filter the products based on the search input
-                dataloading("All",s.toString());
-
+                dataloading(currentSelectedCategory, s.toString());
             }
         });
 
         CategoryAdapter adapter = new CategoryAdapter(categories, this);
         recyclerView.setAdapter(adapter);
 
-
         databaseReference = FirebaseDatabase.getInstance().getReference("Products");
 
-        RecyclerView recyclerViewVerticle = findViewById(R.id.rv_vertical);
         productAdapter = new ProductAdapter(listMainDatabase, BuyerActivity.this);
         recyclerViewVerticle.setAdapter(productAdapter);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this,2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         recyclerViewVerticle.setLayoutManager(gridLayoutManager);
-        dataloading("All","");
 
+        dataloading("All", "");
     }
 
+    private void dataloading(final String category, final String search) {
+        currentSelectedCategory = category;
+        final String query = search != null ? search.trim().toLowerCase() : "";
 
-//            for (Product list: listMainDatabase ) {
-//        if (list.getProductCategory().equals(all))
-//            listTemp.add(list);
-//    }
-
-    private void dataloading(String all, String search) {
-        if (all.equals("All")){
-            databaseReference.addValueEventListener(new ValueEventListener() {
-                @SuppressLint("NotifyDataSetChanged")
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    listMainDatabase.clear();
-                     if (snapshot.exists()){
-                        for (DataSnapshot snapshot1: snapshot.getChildren()){
-                           try {
-                               Product product = snapshot1.getValue(Product.class);
-                               String dateString = product.getBidEndTime();
-                               SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                               System.out.println("Date: "+ dateString);
-                               Date date;
-                               date = sdf.parse(dateString);
-                                if (date != null) {
-                                    LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                                    LocalDate currentDate = LocalDate.now();
-
-                                    if (!localDate.isBefore(currentDate)) {
-                                        // Date is today or in the future, show a message
-                                        if (product.getProductName().toLowerCase().contains(search)||product.getBrand().toLowerCase().contains(search)) {
-                                            listMainDatabase.add(product);
-                                        }
-                                    } else {
-                                        // Date is in the past
-                                        // You can add your logic for handling past dates
-                                    }
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-                        productAdapter.notifyDataSetChanged();
-                    }else {
-                        System.out.println("DATA1213221elsee"+snapshot.getKey());
-                    }
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (shimmerFrameLayout != null) {
+                    shimmerFrameLayout.stopShimmer();
+                    shimmerFrameLayout.setVisibility(View.GONE);
                 }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        }
-        else {
-            databaseReference.addValueEventListener(new ValueEventListener() {
-                @SuppressLint("NotifyDataSetChanged")
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    listMainDatabase.clear();
-                    if (snapshot.exists()){
-                        for (DataSnapshot snapshot1: snapshot.getChildren()){
-
-                                try {
-                                    Product  product =snapshot1.getValue(Product.class);
-                                    if (product.getProductCategory().equals(all)){
-                                        String dateString = product.getBidEndTime();
-                                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                                        Date date;
-                                        date = sdf.parse(dateString);
+                listMainDatabase.clear();
+                if (snapshot.exists()) {
+                    for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                        try {
+                            Product product = snapshot1.getValue(Product.class);
+                            if (product != null) {
+                                boolean categoryMatches = "All".equalsIgnoreCase(category) || category.equalsIgnoreCase(product.getProductCategory());
+                                if (categoryMatches) {
+                                    String dateString = product.getBidEndTime();
+                                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                    Date date = sdf.parse(dateString);
                                     if (date != null) {
                                         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                                         LocalDate currentDate = LocalDate.now();
 
                                         if (!localDate.isBefore(currentDate)) {
-                                            // Date is today or in the future, show a message
-                                            if (product.getProductName().toLowerCase().contains(search)||product.getBrand().toLowerCase().contains(search)) {
+                                            String name = product.getProductName() != null ? product.getProductName().toLowerCase() : "";
+                                            String brand = product.getBrand() != null ? product.getBrand().toLowerCase() : "";
+                                            if (query.isEmpty() || name.contains(query) || brand.contains(query)) {
                                                 listMainDatabase.add(product);
                                             }
-                                        } else {
-                                            // Date is in the past
-                                            // You can add your logic for handling past dates
                                         }
                                     }
-                                }} catch (Exception e) {
-                                    e.printStackTrace();
                                 }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        productAdapter.notifyDataSetChanged();
-                    }else {
-                        Toast.makeText(BuyerActivity.this, "Not Found", Toast.LENGTH_SHORT).show();
-                     }
+                    }
                 }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+                productAdapter.notifyDataSetChanged();
 
+                if (listMainDatabase.isEmpty()) {
+                    if (layoutEmptyState != null) layoutEmptyState.setVisibility(View.VISIBLE);
+                    if (recyclerViewVerticle != null) recyclerViewVerticle.setVisibility(View.GONE);
+                } else {
+                    if (layoutEmptyState != null) layoutEmptyState.setVisibility(View.GONE);
+                    if (recyclerViewVerticle != null) recyclerViewVerticle.setVisibility(View.VISIBLE);
                 }
-            });
-        }
-      }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                if (shimmerFrameLayout != null) {
+                    shimmerFrameLayout.stopShimmer();
+                    shimmerFrameLayout.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -218,33 +188,31 @@ public class BuyerActivity extends AppCompatActivity {
 
             return true;
         }
-        else   if (id == R.id.menu_profile) {
-             Intent intent = new Intent(this, ProfileActivity.class);
-            String data = AppConst.uid;
-            intent.putExtra("uid",data);
+        else if (id == R.id.menu_profile) {
+            Intent intent = new Intent(this, ProfileActivity.class);
+            String currentUid = FirebaseAuth.getInstance().getCurrentUser() != null ? FirebaseAuth.getInstance().getCurrentUser().getUid() : "";
+            intent.putExtra("uid", currentUid);
             startActivity(intent);
             return true;
-
         }
-        else   if (id == R.id.cmplntBox) {
-             Intent intent = new Intent(this, ComplaintActivity.class);
+        else if (id == R.id.cmplntBox) {
+            Intent intent = new Intent(this, ComplaintActivity.class);
             startActivity(intent);
             return true;
-
         }
 
         return super.onOptionsItemSelected(item);
     }
 
     private void logout() {
-        // Sign out the current user
+        // Sign out the current user and completely clear local session
         FirebaseAuth.getInstance().signOut();
         UserStatusManager.removeUserStatus(this);
-        Toast.makeText(this, "SignOut Successfully", Toast.LENGTH_SHORT).show();
-         Intent intent = new Intent(BuyerActivity.this, SignInActivity.class);
-         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-         startActivity(intent);
-         finish();
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(BuyerActivity.this, SignInActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
 
@@ -294,9 +262,11 @@ public class BuyerActivity extends AppCompatActivity {
             holder.textCategoryName.setText(category);
 
             if (position == selectedItem) {
-                holder.textCategoryName.setBackgroundColor(ContextCompat.getColor(context, R.color.select_card));
+                holder.textCategoryName.setBackgroundResource(R.drawable.bg_chip_selected);
+                holder.textCategoryName.setTextColor(ContextCompat.getColor(context, R.color.white));
             } else {
-                holder.textCategoryName.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent));
+                holder.textCategoryName.setBackgroundResource(R.drawable.bg_chip_unselected);
+                holder.textCategoryName.setTextColor(ContextCompat.getColor(context, R.color.chip_text_unselected));
             }
 
             holder.textCategoryName.setOnClickListener(new View.OnClickListener() {
@@ -306,7 +276,6 @@ public class BuyerActivity extends AppCompatActivity {
                     selectedItem = position;
                     notifyItemChanged(previousSelectedItem);
                     notifyItemChanged(selectedItem);
-                    Toast.makeText(context, "Select"+ category, Toast.LENGTH_SHORT).show();
                     String seacrh=etSearch.getText().toString();
                     if (seacrh.equals("")|| seacrh.isEmpty()){
                         seacrh="";

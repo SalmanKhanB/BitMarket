@@ -1,48 +1,48 @@
-<!-- item_bid.xml -->
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginStart="5dp"
-    android:layout_marginEnd="5dp"
-    app:cardCornerRadius="6dp"
-    app:cardElevation="3dp"
-    android:layout_marginTop="2dp"
-    android:layout_marginBottom="2dp"
+    android:layout_marginVertical="4dp"
+    app:cardBackgroundColor="@color/slate_100"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="0dp">
 
-    >
-
-<LinearLayout
-    android:id="@+id/ll"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@color/card_item"
-
-    android:padding="16dp">
-
-    <TextView
-        android:id="@+id/textViewBidderName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textColor="@color/black" />
-
-    <TextView
-        android:id="@+id/textViewBidValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:textColor="@color/purple_500" />
-
-    <View
+    <RelativeLayout
+        android:id="@+id/ll"
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:background="@color/black"
-         />
-    <!-- Add more views for bid details as needed -->
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="10dp">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/textViewBidderName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/textViewBidValue"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Bidder Name"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textViewBidValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_price_badge"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="3dp"
+            android:text="1500 Rs"
+            android:textColor="@color/price_green"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
 </androidx.cardview.widget.CardView>

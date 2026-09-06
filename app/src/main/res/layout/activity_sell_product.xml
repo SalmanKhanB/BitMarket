@@ -3,195 +3,285 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/light_yellow"
     android:layout_height="match_parent"
+    android:background="@color/light_yellow"
+    android:fillViewport="true"
     tools:context=".SellProductActivity">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
 
-
-<TextView
-    android:id="@+id/textViewProductName"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Product Name"
-    android:textSize="18sp"
-    android:layout_marginTop="16dp"
-    android:layout_marginStart="16dp"/>
-
-<EditText
-    android:id="@+id/editTextProductName"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/textViewProductName"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:hint="Enter product name"
-    android:inputType="text"/>
-
-<TextView
-    android:id="@+id/textViewProductCategory"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Product Category"
-    android:textSize="18sp"
-    android:layout_below="@id/editTextProductName"
-    android:layout_marginTop="16dp"
-    android:layout_marginStart="16dp"/>
-
-<Spinner
-    android:id="@+id/spinnerProductCategory"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/textViewProductCategory"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"/>
-
-<TextView
-    android:id="@+id/textViewProductDescription"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Product Description"
-    android:textSize="18sp"
-    android:layout_below="@id/spinnerProductCategory"
-    android:layout_marginTop="16dp"
-    android:layout_marginStart="16dp"/>
-
-<EditText
-    android:id="@+id/editTextProductDescription"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/textViewProductDescription"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:hint="Enter product description"
-    android:inputType="textMultiLine"
-    android:minLines="3"/>
-
-<!-- Code for image uploading goes here -->
-    <!-- ...previous code... -->
-
-    <TextView
-        android:id="@+id/textViewUploadImages"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Upload Images"
-        android:textSize="18sp"
-        android:layout_below="@id/editTextProductDescription"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"/>
-
-    <!-- Placeholder for image uploading -->
     <LinearLayout
-        android:id="@+id/uploadImagesLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textViewUploadImages"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/logo"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="8dp"/>
+        <!-- Main Form Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/white">
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginEnd="8dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginEnd="16dp"/>
+                <!-- Product Name -->
+                <TextView
+                    android:id="@+id/textViewProductName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Product Name"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/editTextProductName"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="e.g. iPhone 14 Pro Max"
+                    android:inputType="text"
+                    android:paddingHorizontal="14dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/slate_400"
+                    android:textSize="14sp" />
+
+                <!-- Category -->
+                <TextView
+                    android:id="@+id/textViewProductCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:text="Product Category"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_input_field">
+
+                    <Spinner
+                        android:id="@+id/spinnerProductCategory"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingHorizontal="10dp" />
+                </FrameLayout>
+
+                <!-- Brand -->
+                <TextView
+                    android:id="@+id/textViewBrand"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:text="Brand / Manufacturer"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/editTextBrand"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="e.g. Apple, Samsung, Nike"
+                    android:inputType="text"
+                    android:paddingHorizontal="14dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/slate_400"
+                    android:textSize="14sp" />
+
+                <!-- Description -->
+                <TextView
+                    android:id="@+id/textViewProductDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:text="Product Description"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/editTextProductDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_input_field"
+                    android:gravity="top|start"
+                    android:hint="Describe condition, features, warranty..."
+                    android:inputType="textMultiLine"
+                    android:minLines="3"
+                    android:padding="14dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/slate_400"
+                    android:textSize="14sp" />
+
+                <!-- Starting Price -->
+                <TextView
+                    android:id="@+id/textViewStartPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:text="Starting Bid Price (Rs)"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/editTextStartPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="e.g. 50000"
+                    android:inputType="numberDecimal"
+                    android:paddingHorizontal="14dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/slate_400"
+                    android:textSize="14sp" />
+
+                <!-- Bid End Time -->
+                <TextView
+                    android:id="@+id/textViewBidEndTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:text="Bid End Time"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/editTextBidEndTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_input_field"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:gravity="center_vertical"
+                    android:onClick="showTimePickerDialog"
+                    android:paddingHorizontal="14dp"
+                    android:text="Select bid end time"
+                    android:textColor="@color/slate_700"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Images Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/textViewUploadImages"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Product Photos (Up to 3)"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/uploadImagesLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <!-- Slot 1 -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="90dp"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="@color/slate_100">
+
+                        <ImageView
+                            android:id="@+id/imageView1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/logo" />
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- Slot 2 -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="90dp"
+                        android:layout_marginHorizontal="3dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="@color/slate_100">
+
+                        <ImageView
+                            android:id="@+id/imageView2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop" />
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- Slot 3 -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="90dp"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="@color/slate_100">
+
+                        <ImageView
+                            android:id="@+id/imageView3"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop" />
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Submit Button -->
+        <Button
+            android:id="@+id/buttonSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="24dp"
+            android:backgroundTint="@color/purple_500"
+            android:text="Publish Listing"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="12dp" />
 
     </LinearLayout>
-
-    <!-- ...remaining code... -->
-
-<TextView
-    android:id="@+id/textViewBrand"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Brand or Company"
-    android:textSize="18sp"
-    android:layout_below="@id/uploadImagesLayout"
-    android:layout_marginTop="16dp"
-    android:layout_marginStart="16dp"/>
-
-<EditText
-    android:id="@+id/editTextBrand"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/textViewBrand"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:hint="Enter brand or company name"
-    android:inputType="text"/>
-
-<TextView
-    android:id="@+id/textViewStartPrice"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Start Price"
-    android:textSize="18sp"
-    android:layout_below="@id/editTextBrand"
-    android:layout_marginTop="16dp"
-    android:layout_marginStart="16dp"/>
-
-<EditText
-    android:id="@+id/editTextStartPrice"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/textViewStartPrice"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:hint="Enter start price"
-    android:inputType="numberDecimal"/>
-    <TextView
-        android:id="@+id/textViewBidEndTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bid End Time"
-        android:textSize="18sp"
-        android:layout_below="@id/editTextStartPrice"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"/>
-
-    <TextView
-        android:id="@+id/editTextBidEndTime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textViewBidEndTime"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:textSize="18sp"
-        android:text="Select bid end time"
-        android:focusable="false"
-        android:onClick="showTimePickerDialog"
-        />
-
-        <!-- ...remaining code... -->
-
-<Button
-    android:id="@+id/buttonSubmit"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/editTextBidEndTime"
-    android:layout_centerHorizontal="true"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginTop="32dp"
-    android:backgroundTint="@color/purple_500"
-    android:layout_marginBottom="16dp"
-    android:text="Submit"/>
-    </RelativeLayout>
 
 </ScrollView>

@@ -22,6 +22,7 @@ import com.example.bitmarket.models.Bid;
 import com.example.bitmarket.models.Product;
 import com.example.bitmarket.utils.AppConst;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import android.net.Uri;
 import android.util.Base64;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,7 +52,10 @@ public class ProductDetailsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_details);
-         setTitle("Product Details");
+        setTitle("Product Details");
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         // Initialize views
          ImageSlider imageSlider = findViewById(R.id.image_slider);
@@ -93,19 +98,25 @@ public class ProductDetailsActivity extends AppCompatActivity {
     List<SlideModel> slideModels = new ArrayList<>();
     if (product.getImageUrls() != null) {
         int imgIndex = 0;
+        File cacheDir = new File(getCacheDir(), "slides");
+        if (!cacheDir.exists()) {
+            cacheDir.mkdirs();
+        }
         for (String url : product.getImageUrls()) {
-            if (url != null) {
-                if (url.startsWith("http://") || url.startsWith("https://")) {
-                    slideModels.add(new SlideModel(url, product.getStartPrice() + " Rs", ScaleTypes.CENTER_INSIDE));
+            if (url != null && !url.trim().isEmpty()) {
+                String trimmed = url.trim();
+                if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("file://") || trimmed.startsWith("content://")) {
+                    slideModels.add(new SlideModel(trimmed, product.getStartPrice() + " Rs", ScaleTypes.CENTER_INSIDE));
                 } else {
                     try {
-                        String cleanBase64 = url.contains(",") ? url.substring(url.indexOf(",") + 1) : url;
+                        String cleanBase64 = trimmed.contains(",") ? trimmed.substring(trimmed.indexOf(",") + 1) : trimmed;
                         byte[] decoded = Base64.decode(cleanBase64, Base64.DEFAULT);
-                        File tempFile = new File(getCacheDir(), "slide_" + (product.getKey() != null ? product.getKey() : "temp") + "_" + (imgIndex++) + ".jpg");
+                        File tempFile = new File(cacheDir, "slide_" + (product.getKey() != null ? product.getKey() : "temp") + "_" + (imgIndex++) + ".jpg");
                         FileOutputStream fos = new FileOutputStream(tempFile);
                         fos.write(decoded);
+                        fos.flush();
                         fos.close();
-                        slideModels.add(new SlideModel(tempFile.getAbsolutePath(), product.getStartPrice() + " Rs", ScaleTypes.CENTER_INSIDE));
+                        slideModels.add(new SlideModel(Uri.fromFile(tempFile).toString(), product.getStartPrice() + " Rs", ScaleTypes.CENTER_INSIDE));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -115,7 +126,9 @@ public class ProductDetailsActivity extends AppCompatActivity {
     }
 
 // Add the slides to the image slider
-    imageSlider.setImageList(slideModels);
+    if (!slideModels.isEmpty()) {
+        imageSlider.setImageList(slideModels);
+    }
 }catch (Exception ex){
     Toast.makeText(this, "error"+ex.getMessage(), Toast.LENGTH_SHORT).show();
 }
@@ -131,16 +144,19 @@ public class ProductDetailsActivity extends AppCompatActivity {
                 }
             });
 
-try {
-    System.out.println("EROROROROR"+product.getUid()+ ":"+AppConst.uid);
-    if (product.getUid().equals(AppConst.uid)) {
-        bidButton.setVisibility(View.GONE);
-        deleteBid.setVisibility(View.VISIBLE);
-    }else {
-        bidButton.setVisibility(View.VISIBLE);
-        deleteBid.setVisibility(View.GONE);
-    }
-}catch (Exception ex){}
+            try {
+                String myUid = FirebaseAuth.getInstance().getCurrentUser() != null ? FirebaseAuth.getInstance().getCurrentUser().getUid() : "";
+                String productOwnerUid = product != null && product.getUid() != null ? product.getUid() : "";
+                if (!myUid.isEmpty() && myUid.equals(productOwnerUid)) {
+                    bidButton.setVisibility(View.GONE);
+                    deleteBid.setVisibility(View.VISIBLE);
+                } else {
+                    bidButton.setVisibility(View.VISIBLE);
+                    deleteBid.setVisibility(View.GONE);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
 
             // Add click listener to bid button for implementing bidding logic
             bidButton.setOnClickListener(v -> {
@@ -156,7 +172,8 @@ try {
         bottomSheetDialog.setContentView(bottomSheetView);
         EditText editBidAmount = bottomSheetView.findViewById(R.id.edit_bid_amount);
         Button buttonPlaceBid = bottomSheetView.findViewById(R.id.button_place_bid);
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Bids").child(product.getProductCategory()).child(product.getKey()).child(AppConst.uid);
+        String currentUid = AppConst.getUid();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Bids").child(product.getProductCategory()).child(product.getKey()).child(currentUid);
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -187,7 +204,7 @@ try {
 // Define the path to store the bid
                     String category = product.getProductCategory();
                     String productKey = product.getKey();
-                    String uid = AppConst.uid;
+                    String uid = AppConst.getUid();
 
 // Construct the path to store the bid data
                     String bidPath = "Bids/" + category + "/" + productKey + "/" + uid;
@@ -249,5 +266,14 @@ try {
 
         // Use the custom Comparator to sort the bidList
         Collections.sort(bidList, bidComparator);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull android.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

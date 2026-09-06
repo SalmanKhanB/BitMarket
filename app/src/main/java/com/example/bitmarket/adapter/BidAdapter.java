@@ -11,21 +11,26 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bitmarket.ProductDetailsActivity;
 import com.example.bitmarket.ProfileActivity;
 import com.example.bitmarket.R;
 import com.example.bitmarket.models.Bid;
-import com.example.bitmarket.utils.AppConst;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BidAdapter extends RecyclerView.Adapter<BidAdapter.BidViewHolder> {
     private List<Bid> bidList;
-    Context context;
+    private Context context;
+    private final Map<String, String> nameCache = new HashMap<>();
 
     public BidAdapter(List<Bid> bidList, Context productDetailsActivity) {
         this.bidList = bidList;
-        context = productDetailsActivity;
+        this.context = productDetailsActivity;
     }
 
     @NonNull
@@ -40,8 +45,6 @@ public class BidAdapter extends RecyclerView.Adapter<BidAdapter.BidViewHolder> {
     public void onBindViewHolder(@NonNull BidViewHolder holder, int position) {
         Bid bid = bidList.get(position);
         holder.bind(bid);
-
-
     }
 
     @Override
@@ -52,7 +55,7 @@ public class BidAdapter extends RecyclerView.Adapter<BidAdapter.BidViewHolder> {
     public class BidViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewBidderName;
         private TextView textViewBidValue;
-        LinearLayout layout;
+        private View layout;
 
         public BidViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -62,21 +65,59 @@ public class BidAdapter extends RecyclerView.Adapter<BidAdapter.BidViewHolder> {
         }
 
         public void bind(Bid bid) {
-            // Bind bid data to the views
-            textViewBidderName.setText("Bidder: " + bid.getUid());
-            textViewBidValue.setText("Bid: " + bid.getBidValue());
+            String uid = bid.getUid();
+            textViewBidValue.setText(bid.getBidValue() + " Rs");
+
+            if (uid == null || uid.trim().isEmpty()) {
+                textViewBidderName.setText("Bidder: Anonymous");
+            } else if (nameCache.containsKey(uid)) {
+                textViewBidderName.setText("Bidder: " + nameCache.get(uid));
+            } else {
+                textViewBidderName.setText("Bidder: Loading...");
+                textViewBidderName.setTag(uid);
+
+                FirebaseDatabase.getInstance().getReference("Profiles")
+                        .child(uid)
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                String name = null;
+                                if (snapshot.exists()) {
+                                    if (snapshot.hasChild("name") && snapshot.child("name").getValue() != null) {
+                                        name = String.valueOf(snapshot.child("name").getValue()).trim();
+                                    } else if (snapshot.hasChild("email") && snapshot.child("email").getValue() != null) {
+                                        name = String.valueOf(snapshot.child("email").getValue()).trim();
+                                    }
+                                }
+
+                                if (name == null || name.isEmpty()) {
+                                    name = "User (" + (uid.length() > 6 ? uid.substring(0, 6) : uid) + ")";
+                                }
+
+                                nameCache.put(uid, name);
+
+                                if (uid.equals(textViewBidderName.getTag())) {
+                                    textViewBidderName.setText("Bidder: " + name);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                if (uid.equals(textViewBidderName.getTag())) {
+                                    textViewBidderName.setText("Bidder: User");
+                                }
+                            }
+                        });
+            }
+
             layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Handle the click event and show a toast message\
                     Intent intent = new Intent(context, ProfileActivity.class);
-                    String data = bid.getUid();
-                    intent.putExtra("uid",data);
+                    intent.putExtra("uid", bid.getUid());
                     context.startActivity(intent);
-
                 }
             });
-
         }
     }
 }

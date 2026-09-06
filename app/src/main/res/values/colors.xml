@@ -1,14 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#0D47A1</color>
-    <color name="purple_500">#4CAF50</color>
-    <color name="purple_700">#2980B9 </color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="select_card">#ABC7FFC9</color>
-    <color name="card_item">#ABC7FFC9</color>
-    <color name="light_yellow">#FBFFCF</color>
+    <!-- Brand Primary Colors (Modern Indigo & Slate Palette) -->
+    <color name="purple_200">#3B82F6</color>
+    <color name="purple_500">#2563EB</color>
+    <color name="purple_700">#1D4ED8</color>
+    <color name="teal_200">#10B981</color>
+    <color name="teal_700">#047857</color>
 
+    <!-- Base Neutral Colors -->
+    <color name="black">#0F172A</color>
+    <color name="white">#FFFFFF</color>
+    <color name="slate_50">#F8FAFC</color>
+    <color name="slate_100">#F1F5F9</color>
+    <color name="slate_200">#E2E8F0</color>
+    <color name="slate_400">#94A3B8</color>
+    <color name="slate_500">#64748B</color>
+    <color name="slate_700">#334155</color>
+    <color name="slate_900">#0F172A</color>
+
+    <!-- Functional Colors -->
+    <color name="light_yellow">#F8FAFC</color> <!-- Replaced pale yellow with modern slate background -->
+    <color name="card_item">#FFFFFF</color>     <!-- Crisp white cards -->
+    <color name="select_card">#2563EB</color>   <!-- Active primary chip color -->
+    <color name="unselect_chip">#F1F5F9</color>
+    <color name="chip_text_unselected">#475569</color>
+
+    <!-- Accent Badges -->
+    <color name="price_green">#059669</color>
+    <color name="price_green_light">#D1FAE5</color>
+    <color name="danger_red">#EF4444</color>
+    <color name="danger_red_dark">#DC2626</color>
+    <color name="badge_bg">#EEF2FF</color>
 </resources>

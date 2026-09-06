@@ -136,21 +136,18 @@ public boolean onCreateOptionsMenu(Menu menu) {
             showLogoutConfirmationDialog();
             return true;
         }
-        else   if (id == R.id.menu_profile) {
-             Intent intent = new Intent(this, ProfileActivity.class);
-            String data = AppConst.uid;
-            intent.putExtra("uid",data);
+        else if (id == R.id.menu_profile) {
+            Intent intent = new Intent(this, ProfileActivity.class);
+            String currentUid = FirebaseAuth.getInstance().getCurrentUser() != null ? FirebaseAuth.getInstance().getCurrentUser().getUid() : "";
+            intent.putExtra("uid", currentUid);
             startActivity(intent);
             return true;
-
         }
-        else   if (id == R.id.cmplntBox) {
+        else if (id == R.id.cmplntBox) {
             Intent intent = new Intent(this, ComplaintActivity.class);
             startActivity(intent);
             return true;
-
         }
-
 
         return super.onOptionsItemSelected(item);
     }
@@ -178,12 +175,12 @@ public boolean onCreateOptionsMenu(Menu menu) {
         dialog.show();
     }
     private void logout() {
-        // Sign out the current user
+        // Sign out the current user and completely clear local session
         FirebaseAuth.getInstance().signOut();
         UserStatusManager.removeUserStatus(this);
-        Toast.makeText(this, "SignOut Successfully", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(SellerActivity.this, SignInActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }
